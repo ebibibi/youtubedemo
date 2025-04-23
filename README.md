@@ -1,2 +1,2 @@
 # youtubedemo
-https://www.youtube.com/@ebibibi/でデモした際に使ったコードです。
+https://www.youtube.com/@ebibibi/ でデモをした際に使ったコードです。
