@@ -30,10 +30,6 @@ $vm = az vm create `
   --size $VmSize --admin-username $AdminUser --admin-password $AdminPass `
   --public-ip-sku Standard -o json
 
-# RDP ポート (3389) は自宅 IP のみに開放（任意）
-$MyIP = (Invoke-RestMethod https://ifconfig.me).Trim()
-az vm open-port -g $RG -n $VmName --port 3389 --priority 1200 --source-address-prefixes $MyIP | Out-Null
-
 # ================== 3) キー取得 ==================
 $StorageKey = az storage account keys list `
   --resource-group $RG --account-name $Storage `
