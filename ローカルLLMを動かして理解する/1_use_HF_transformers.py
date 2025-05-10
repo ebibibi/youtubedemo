@@ -1,8 +1,7 @@
 import torch
-
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-model_name = "google/gemma-3-4b-it"
+model_name = "Qwen/Qwen3-1.7B"
 
 # decide device (CUDA-first, CPU fallback)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
