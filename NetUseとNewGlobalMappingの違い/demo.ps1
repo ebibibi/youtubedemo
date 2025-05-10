@@ -30,10 +30,6 @@ $vm = az vm create `
   --size $VmSize --admin-username $AdminUser --admin-password $AdminPass `
   --public-ip-sku Standard -o json
 
-# RDP ポート (3389) は自宅 IP のみに開放（任意）
-$MyIP = (Invoke-RestMethod https://ifconfig.me).Trim()
-az vm open-port -g $RG -n $VmName --port 3389 --priority 1200 --source-address-prefixes $MyIP | Out-Null
-
 # ================== 3) キー取得 ==================
 $StorageKey = az storage account keys list `
   --resource-group $RG --account-name $Storage `
@@ -45,23 +41,23 @@ $PasteBlock = @"
 #  ★★ VM に RDP ⇒ 管理者 PowerShell で貼り付け ★★
 #  (そのままコピペで OK)
 ############################################
-\$Storage = '$Storage'
-\$Share   = '$Share'
-\$Key     = '$StorageKey'
+`$Storage = '$Storage'
+`$Share   = '$Share'
+`$Key     = '$StorageKey'
 
 # --- net use---
-net use Z: "\\\$Storage.file.core.windows.net\\\$Share" /user:\$Storage \$Key /persistent:yes
+net use Z: "\\`$Storage.file.core.windows.net\`$Share" /user:`$Storage `$Key /persistent:yes
 
 # --- SmbGlobalMapping ---
-\$user = "\$env:COMPUTERNAME\\\$Storage"
-\$sec  = ConvertTo-SecureString \$Key -AsPlainText -Force
-\$cred = [pscredential]::new(\$user,\$sec)
+`$user = "`$env:COMPUTERNAME\`$Storage"
+`$sec  = ConvertTo-SecureString `$Key -AsPlainText -Force
+`$cred = [pscredential]::new(`$user,`$sec)
 
-New-SmbGlobalMapping `
-    -RemotePath "\\\$Storage.file.core.windows.net\\\$Share" `
-    -LocalPath  X: `
-    -Credential \$cred `
-    -Persistent \$true
+New-SmbGlobalMapping ``
+    -RemotePath "\\`${Storage}.file.core.windows.net\`$Share" ``
+    -LocalPath  X: ``
+    -Credential `$cred ``
+    -Persistent `$true
 
 Write-Host "`n✅ ドライブ マッピング完了！Z: = net use、X: = SmbGlobalMapping" -ForegroundColor Green
 ############################################
